@@ -22,7 +22,13 @@ function createFAQItems() {
 
     return {
         subscribe,
-        create: (question, answer) => update(items => items.push({question: question, answer: answer})),
+        create: faqitem => update(items => {
+            console.log('create faqitem', faqitem);
+            return [
+                ...items,
+                faqitem
+            ]
+        }),
         reset: () => set(faqitems_default)
     }
 }

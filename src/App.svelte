@@ -1,14 +1,23 @@
 <script>
   import FAQ from "./FAQ.svelte"
   import {faqitemsstore1} from './stores.js'
+  import {faqitemsstore2} from './stores.js'
 
   export let name;
 </script>
 
 
 <main>
-  <h1>FAQ zum Thema "{name}"</h1>
-  <FAQ faqitems={$faqitemsstore1}/>
+  <h1>FAQ for "{name}"</h1>
+  <FAQ faqitems={faqitemsstore1}/>
+  <button on:click={
+      () => faqitemsstore1.create({question: 'my static question', answer: 'just 42'})
+    }>add static FAQItem from App component</button>
+
+  <h1>FAQ for "Frameworks"</h1>
+  <FAQ faqitems={faqitemsstore2}/>
+
+
 </main>
 
 
