@@ -1,10 +1,12 @@
 <script>
+  import { fade } from 'svelte/transition';
+
   export let question = "What is the question?"
   export let answer = "The answer is 42."
 </script>
 
 
-<li>
+<li transition:fade="{{duration:2000}}">
   <h2>{question}</h2>
   <p>
     {answer}
