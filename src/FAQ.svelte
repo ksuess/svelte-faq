@@ -18,8 +18,10 @@ TODO use external data
 
 
 <ul>
-  {#each $faqitems as faqitem} <!-- $faqitems: value (list of FAQ items) stored in store -->
-    <FAQItem question={faqitem.question} answer={faqitem.answer} />
+  {#each $faqitems as faqitem, i} <!-- $faqitems: value (list of FAQ items) stored in store -->
+    <FAQItem faqitem={faqitem}
+      index={i}
+      faqitems={faqitems}/>
   {/each}
 </ul>
 
