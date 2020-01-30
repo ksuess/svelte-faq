@@ -12,7 +12,7 @@ const faqitems_default = [
             the Apache Project.`
     },
     {
-        question: 'Who can join the Plone Foundation',
+        question: 'Who can join the Plone Foundation?',
         answer: `Everyone contributing to Plone Software, Plone documentation, organizing events or doing something good for PF.`
     }
 ]
@@ -23,7 +23,7 @@ function createFAQItems() {
     return {
         subscribe,
         create: faqitem => update(items => {
-            console.log('create faqitem', faqitem);
+            // console.log('create faqitem', faqitem);
             return [
                 ...items,
                 faqitem

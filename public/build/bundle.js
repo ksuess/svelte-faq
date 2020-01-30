@@ -475,18 +475,18 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
-    // (20:2) {#each $faqitems as faqitem}
+    // (21:2) {#each $faqitems as faqitem}
     function create_each_block(ctx) {
     	let current;
 
     	const faqitem = new FAQItem({
     			props: {
-    				question: /*faqitem*/ ctx[8].question,
-    				answer: /*faqitem*/ ctx[8].answer
+    				question: /*faqitem*/ ctx[7].question,
+    				answer: /*faqitem*/ ctx[7].answer
     			},
     			$$inline: true
     		});
@@ -501,8 +501,8 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const faqitem_changes = {};
-    			if (dirty & /*$faqitems*/ 8) faqitem_changes.question = /*faqitem*/ ctx[8].question;
-    			if (dirty & /*$faqitems*/ 8) faqitem_changes.answer = /*faqitem*/ ctx[8].answer;
+    			if (dirty & /*$faqitems*/ 8) faqitem_changes.question = /*faqitem*/ ctx[7].question;
+    			if (dirty & /*$faqitems*/ 8) faqitem_changes.answer = /*faqitem*/ ctx[7].answer;
     			faqitem.$set(faqitem_changes);
     		},
     		i: function intro(local) {
@@ -523,7 +523,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(20:2) {#each $faqitems as faqitem}",
+    		source: "(21:2) {#each $faqitems as faqitem}",
     		ctx
     	});
 
@@ -542,9 +542,7 @@ var app = (function () {
     	let t3;
     	let input1;
     	let t4;
-    	let button0;
-    	let t6;
-    	let button1;
+    	let button;
     	let current;
     	let dispose;
     	let each_value = /*$faqitems*/ ctx[3];
@@ -576,21 +574,17 @@ var app = (function () {
     			t3 = text("Answer:\n    ");
     			input1 = element("input");
     			t4 = space();
-    			button0 = element("button");
-    			button0.textContent = "add static FAQItem";
-    			t6 = space();
-    			button1 = element("button");
-    			button1.textContent = "add";
-    			add_location(ul, file$1, 18, 0, 358);
+    			button = element("button");
+    			button.textContent = "add";
+    			add_location(ul, file$1, 19, 0, 342);
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$1, 27, 4, 575);
-    			add_location(label0, file$1, 25, 2, 549);
+    			add_location(input0, file$1, 28, 4, 559);
+    			add_location(label0, file$1, 26, 2, 533);
     			attr_dev(input1, "type", "text");
-    			add_location(input1, file$1, 31, 4, 654);
-    			add_location(label1, file$1, 29, 2, 630);
-    			add_location(button0, file$1, 34, 2, 764);
-    			add_location(button1, file$1, 37, 2, 865);
-    			add_location(div, file$1, 24, 0, 541);
+    			add_location(input1, file$1, 32, 4, 638);
+    			add_location(label1, file$1, 30, 2, 614);
+    			add_location(button, file$1, 34, 2, 691);
+    			add_location(div, file$1, 25, 0, 525);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -614,16 +608,13 @@ var app = (function () {
     			append_dev(label1, input1);
     			set_input_value(input1, /*answer*/ ctx[2]);
     			append_dev(div, t4);
-    			append_dev(div, button0);
-    			append_dev(div, t6);
-    			append_dev(div, button1);
+    			append_dev(div, button);
     			current = true;
 
     			dispose = [
     				listen_dev(input0, "input", /*input0_input_handler*/ ctx[5]),
     				listen_dev(input1, "input", /*input1_input_handler*/ ctx[6]),
-    				listen_dev(button0, "click", /*click_handler*/ ctx[7], false, false, false),
-    				listen_dev(button1, "click", /*createFAQItem*/ ctx[4], false, false, false)
+    				listen_dev(button, "click", /*createFAQItem*/ ctx[4], false, false, false)
     			];
     		},
     		p: function update(ctx, [dirty]) {
@@ -706,17 +697,16 @@ var app = (function () {
     		$$subscribe_faqitems = () => ($$unsubscribe_faqitems(), $$unsubscribe_faqitems = subscribe(faqitems, $$value => $$invalidate(3, $faqitems = $$value)), faqitems);
 
     	$$self.$$.on_destroy.push(() => $$unsubscribe_faqitems());
-    	let { faqitems = [] } = $$props; // must be provided by parent
+    	let { faqitems = undefined } = $$props; // store must be provided by parent
     	validate_store(faqitems, "faqitems");
     	$$subscribe_faqitems();
-    	let question = "What is your question?";
-    	let answer = `It's that easy: 42.`;
+    	let question = "";
+    	let answer = "";
 
     	function createFAQItem(event) {
-    		faqitems.create({
-    			question: "abc?",
-    			answer: "lkajöd lakjdf"
-    		});
+    		faqitems.create({ question, answer });
+    		$$invalidate(1, question = "");
+    		$$invalidate(2, answer = "");
     	}
 
     	const writable_props = ["faqitems"];
@@ -734,8 +724,6 @@ var app = (function () {
     		answer = this.value;
     		$$invalidate(2, answer);
     	}
-
-    	const click_handler = () => faqitems.create("qs", "about 42");
 
     	$$self.$set = $$props => {
     		if ("faqitems" in $$props) $$subscribe_faqitems($$invalidate(0, faqitems = $$props.faqitems));
@@ -759,8 +747,7 @@ var app = (function () {
     		$faqitems,
     		createFAQItem,
     		input0_input_handler,
-    		input1_input_handler,
-    		click_handler
+    		input1_input_handler
     	];
     }
 
@@ -850,7 +837,7 @@ var app = (function () {
             the Apache Project.`
         },
         {
-            question: 'Who can join the Plone Foundation',
+            question: 'Who can join the Plone Foundation?',
             answer: `Everyone contributing to Plone Software, Plone documentation, organizing events or doing something good for PF.`
         }
     ];
@@ -861,7 +848,7 @@ var app = (function () {
         return {
             subscribe,
             create: faqitem => update(items => {
-                console.log('create faqitem', faqitem);
+                // console.log('create faqitem', faqitem);
                 return [
                     ...items,
                     faqitem
@@ -885,12 +872,9 @@ var app = (function () {
     	let t2;
     	let t3;
     	let t4;
-    	let button;
-    	let t6;
     	let h11;
-    	let t8;
+    	let t6;
     	let current;
-    	let dispose;
 
     	const faq0 = new FAQ({
     			props: { faqitems: faqitemsstore1 },
@@ -912,18 +896,14 @@ var app = (function () {
     			t3 = space();
     			create_component(faq0.$$.fragment);
     			t4 = space();
-    			button = element("button");
-    			button.textContent = "add static FAQItem from App component";
-    			t6 = space();
     			h11 = element("h1");
     			h11.textContent = "FAQ for \"Frameworks\"";
-    			t8 = space();
+    			t6 = space();
     			create_component(faq1.$$.fragment);
     			attr_dev(h10, "class", "svelte-12q9x7s");
     			add_location(h10, file$2, 10, 2, 173);
-    			add_location(button, file$2, 12, 2, 236);
     			attr_dev(h11, "class", "svelte-12q9x7s");
-    			add_location(h11, file$2, 16, 2, 398);
+    			add_location(h11, file$2, 13, 2, 237);
     			attr_dev(main, "class", "svelte-12q9x7s");
     			add_location(main, file$2, 9, 0, 164);
     		},
@@ -939,13 +919,10 @@ var app = (function () {
     			append_dev(main, t3);
     			mount_component(faq0, main, null);
     			append_dev(main, t4);
-    			append_dev(main, button);
-    			append_dev(main, t6);
     			append_dev(main, h11);
-    			append_dev(main, t8);
+    			append_dev(main, t6);
     			mount_component(faq1, main, null);
     			current = true;
-    			dispose = listen_dev(button, "click", /*click_handler*/ ctx[1], false, false, false);
     		},
     		p: function update(ctx, [dirty]) {
     			if (!current || dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
@@ -965,7 +942,6 @@ var app = (function () {
     			if (detaching) detach_dev(main);
     			destroy_component(faq0);
     			destroy_component(faq1);
-    			dispose();
     		}
     	};
 
@@ -988,11 +964,6 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
-    	const click_handler = () => faqitemsstore1.create({
-    		question: "my static question",
-    		answer: "just 42"
-    	});
-
     	$$self.$set = $$props => {
     		if ("name" in $$props) $$invalidate(0, name = $$props.name);
     	};
@@ -1005,7 +976,7 @@ var app = (function () {
     		if ("name" in $$props) $$invalidate(0, name = $$props.name);
     	};
 
-    	return [name, click_handler];
+    	return [name];
     }
 
     class App extends SvelteComponentDev {

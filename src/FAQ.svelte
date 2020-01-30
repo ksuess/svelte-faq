@@ -1,17 +1,18 @@
 <!--
-TODO add FAQItem
 TODO use external data
  -->
 
 <script>
   import FAQItem from './FAQItem.svelte'
 
-  export let faqitems = []; // must be provided by parent
-  let question = 'What is your question?';
-  let answer = `It's that easy: 42.`;
+  export let faqitems = undefined; // store must be provided by parent
+  let question = '';
+  let answer = '';
 
   function createFAQItem(event) {
-    faqitems.create({question: 'abc?', answer: 'lkajöd lakjdf'});
+    faqitems.create({question: question, answer: answer});
+    question = '';
+    answer = '';
   }
 </script>
 
@@ -31,9 +32,5 @@ TODO use external data
     Answer:
     <input type="text" bind:value={answer}>
   </label>
-  <!-- <button on:click={createFAQItem}>add</button> -->
-  <button on:click={
-      () => faqitems.create('qs', 'about 42')
-    }>add static FAQItem</button>
   <button on:click={createFAQItem}>add</button>
 </div>
