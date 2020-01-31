@@ -22,6 +22,7 @@ function createFAQItems() {
 
     return {
         subscribe,
+        set,
         create: faqitem => update(items => {
             // console.log('create faqitem', faqitem);
             return [

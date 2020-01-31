@@ -16,8 +16,8 @@
     // TODO save handler
     // why isn't it necessary to update the store explicitly with the new faqitem?
     // if it's really not necessary, the index is superfluous
-    console.log(faqitem);
-    // $faqitems[index] = this;
+    console.log("faqitem to save", faqitem);
+    // $faqitems[index] = faqitem;
     console.log("faqitem saved to ", $faqitems);
     console.log("index", index);
     editmode = false;

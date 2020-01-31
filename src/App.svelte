@@ -8,6 +8,11 @@
 
 
 <main>
+  <div>
+    <h2>DEBUG</h2>
+    <button on:click={() => {console.log(faqitemsstore1);console.log($faqitemsstore1)}}>show store faqitemsstore1</button>
+  </div>
+
   <h1>FAQ for "{name}"</h1>
   <FAQ faqitems={faqitemsstore1}/>
 
