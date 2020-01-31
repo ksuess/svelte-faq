@@ -1,5 +1,6 @@
 <script>
   import { fade } from 'svelte/transition';
+  import { slide } from 'svelte/transition';
 
   export let faqitem = undefined;
   export let index = undefined;
@@ -13,20 +14,20 @@
   }
 
   function saveFAQItem(event) {
+    // console.log("faqitem to save", faqitem);
     // TODO save handler
     // why isn't it necessary to update the store explicitly with the new faqitem?
-    // if it's really not necessary, the index is superfluous
-    console.log("faqitem to save", faqitem);
+    // if it's really not necessary, the index is superfluous (no, see delete and add new item)
     // $faqitems[index] = faqitem;
-    console.log("faqitem saved to ", $faqitems);
-    console.log("index", index);
     editmode = false;
     answervisible = true;
+    // console.log("faqitem saved to ", $faqitems);
+    // console.log("index", index);
   }
 </script>
 
 
-<li transition:fade="{{duration:1000}}">
+<li>
   <div class="control">
     <button class="destructive">delete</button>
     <button on:click={() => editmode=!editmode}>edit</button>
@@ -34,20 +35,22 @@
   {#if !editmode}
     <h2 on:click={toggleAnswer}>{faqitem.question}</h2>
     {#if answervisible}
-      <p transition:fade="{{duration:1000}}">
+      <p transition:slide|local="{{duration:1000}}">
         {faqitem.answer}
       </p>
     {/if}
   {:else}
-    <label>
-      Question:
-      <input type="text" bind:value={faqitem.question}>
-    </label>
-    <label>
-      Answer:
-      <input type="text" bind:value={faqitem.answer}>
-    </label>
-    <button on:click={saveFAQItem}>save</button>
+    <div transition:fade>
+      <label>
+        Question:
+        <input type="text" bind:value={faqitem.question}>
+      </label>
+      <label>
+        Answer:
+        <input type="text" bind:value={faqitem.answer}>
+      </label>
+      <button on:click={saveFAQItem}>save (in fact no need to save, store is updated while typing)</button>
+    </div>
   {/if}
 </li>
 

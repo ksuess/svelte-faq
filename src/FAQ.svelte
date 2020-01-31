@@ -10,6 +10,7 @@ TODO use external data
   let answer = '';
 
   function createFAQItem(event) {
+    // reactivity! updating the store cause the view to update with the new FAQItem
     faqitems.create({question: question, answer: answer});
     question = '';
     answer = '';
