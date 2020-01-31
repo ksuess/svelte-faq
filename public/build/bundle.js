@@ -587,7 +587,7 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file = "src/FAQItem.svelte";
 
-    // (40:2) {:else}
+    // (41:2) {:else}
     function create_else_block(ctx) {
     	let label0;
     	let t0;
@@ -613,12 +613,12 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "save";
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file, 42, 6, 1118);
-    			add_location(label0, file, 40, 4, 1088);
+    			add_location(input0, file, 43, 6, 1144);
+    			add_location(label0, file, 41, 4, 1114);
     			attr_dev(input1, "type", "text");
-    			add_location(input1, file, 46, 6, 1213);
-    			add_location(label1, file, 44, 4, 1185);
-    			add_location(button, file, 48, 4, 1278);
+    			add_location(input1, file, 47, 6, 1239);
+    			add_location(label1, file, 45, 4, 1211);
+    			add_location(button, file, 49, 4, 1304);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, label0, anchor);
@@ -664,14 +664,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(40:2) {:else}",
+    		source: "(41:2) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (33:2) {#if !editmode}
+    // (34:2) {#if !editmode}
     function create_if_block(ctx) {
     	let h2;
     	let t0_value = /*faqitem*/ ctx[0].question + "";
@@ -690,7 +690,7 @@ var app = (function () {
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
     			attr_dev(h2, "class", "svelte-4qn5oh");
-    			add_location(h2, file, 33, 4, 906);
+    			add_location(h2, file, 34, 4, 932);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
@@ -746,14 +746,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(33:2) {#if !editmode}",
+    		source: "(34:2) {#if !editmode}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (35:4) {#if answervisible}
+    // (36:4) {#if answervisible}
     function create_if_block_1(ctx) {
     	let p;
     	let t_value = /*faqitem*/ ctx[0].answer + "";
@@ -765,7 +765,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			t = text(t_value);
-    			add_location(p, file, 35, 6, 988);
+    			add_location(p, file, 36, 6, 1014);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -800,7 +800,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(35:4) {#if answervisible}",
+    		source: "(36:4) {#if answervisible}",
     		ctx
     	});
 
@@ -842,13 +842,13 @@ var app = (function () {
     			t3 = space();
     			if_block.c();
     			attr_dev(button0, "class", "destructive svelte-4qn5oh");
-    			add_location(button0, file, 29, 4, 769);
+    			add_location(button0, file, 30, 4, 795);
     			attr_dev(button1, "class", "svelte-4qn5oh");
-    			add_location(button1, file, 30, 4, 817);
+    			add_location(button1, file, 31, 4, 843);
     			attr_dev(div, "class", "control svelte-4qn5oh");
-    			add_location(div, file, 28, 2, 743);
+    			add_location(div, file, 29, 2, 769);
     			attr_dev(li, "class", "svelte-4qn5oh");
-    			add_location(li, file, 27, 0, 700);
+    			add_location(li, file, 28, 0, 726);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -954,6 +954,7 @@ var app = (function () {
 
     		console.log("index", index);
     		$$invalidate(3, editmode = false);
+    		$$invalidate(2, answervisible = true);
     	}
 
     	const writable_props = ["faqitem", "index", "faqitems"];
@@ -1161,6 +1162,7 @@ var app = (function () {
     			t4 = space();
     			button = element("button");
     			button.textContent = "add";
+    			attr_dev(ul, "class", "svelte-146sbs6");
     			add_location(ul, file$1, 19, 0, 342);
     			attr_dev(input0, "type", "text");
     			add_location(input0, file$1, 30, 4, 569);
@@ -1169,6 +1171,7 @@ var app = (function () {
     			add_location(input1, file$1, 34, 4, 648);
     			add_location(label1, file$1, 32, 2, 624);
     			add_location(button, file$1, 36, 2, 701);
+    			attr_dev(div, "class", "svelte-146sbs6");
     			add_location(div, file$1, 27, 0, 535);
     		},
     		l: function claim(nodes) {
@@ -1485,11 +1488,11 @@ var app = (function () {
     			h11.textContent = "FAQ for \"Frameworks\"";
     			t6 = space();
     			create_component(faq1.$$.fragment);
-    			attr_dev(h10, "class", "svelte-12q9x7s");
+    			attr_dev(h10, "class", "svelte-rgfnp2");
     			add_location(h10, file$2, 10, 2, 173);
-    			attr_dev(h11, "class", "svelte-12q9x7s");
+    			attr_dev(h11, "class", "svelte-rgfnp2");
     			add_location(h11, file$2, 13, 2, 237);
-    			attr_dev(main, "class", "svelte-12q9x7s");
+    			attr_dev(main, "class", "svelte-rgfnp2");
     			add_location(main, file$2, 9, 0, 164);
     		},
     		l: function claim(nodes) {

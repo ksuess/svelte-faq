@@ -36,3 +36,13 @@ TODO use external data
   </label>
   <button on:click={createFAQItem}>add</button>
 </div>
+
+<style type="less">
+ul {
+  padding-left: 0;
+}
+div {
+  background-color: lighten(orange, 45%);
+  padding: 0.7rem 0.4rem;
+}
+</style>

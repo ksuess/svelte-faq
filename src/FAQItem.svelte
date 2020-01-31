@@ -21,6 +21,7 @@
     console.log("faqitem saved to ", $faqitems);
     console.log("index", index);
     editmode = false;
+    answervisible = true;
   }
 </script>
 
