@@ -1531,7 +1531,7 @@ var app = (function () {
     			h2.textContent = "DEBUG";
     			t1 = space();
     			button = element("button");
-    			button.textContent = "show store faqitemsstore1";
+    			button.textContent = "log store faqitemsstore1";
     			t3 = space();
     			h10 = element("h1");
     			t4 = text("FAQ for \"");
@@ -1544,14 +1544,15 @@ var app = (function () {
     			h11.textContent = "FAQ for \"Frameworks\"";
     			t10 = space();
     			create_component(faq1.$$.fragment);
-    			add_location(h2, file$2, 11, 4, 183);
-    			add_location(button, file$2, 12, 4, 202);
+    			add_location(h2, file$2, 11, 4, 197);
+    			add_location(button, file$2, 12, 4, 216);
+    			attr_dev(div, "class", "debug svelte-1607vhf");
     			add_location(div, file$2, 10, 2, 173);
-    			attr_dev(h10, "class", "svelte-rgfnp2");
-    			add_location(h10, file$2, 15, 2, 333);
-    			attr_dev(h11, "class", "svelte-rgfnp2");
-    			add_location(h11, file$2, 18, 2, 397);
-    			attr_dev(main, "class", "svelte-rgfnp2");
+    			attr_dev(h10, "class", "svelte-1607vhf");
+    			add_location(h10, file$2, 18, 2, 371);
+    			attr_dev(h11, "class", "svelte-1607vhf");
+    			add_location(h11, file$2, 21, 2, 435);
+    			attr_dev(main, "class", "svelte-1607vhf");
     			add_location(main, file$2, 9, 0, 164);
     		},
     		l: function claim(nodes) {

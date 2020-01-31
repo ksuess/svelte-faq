@@ -8,9 +8,12 @@
 
 
 <main>
-  <div>
+  <div class="debug">
     <h2>DEBUG</h2>
-    <button on:click={() => {console.log(faqitemsstore1);console.log($faqitemsstore1)}}>show store faqitemsstore1</button>
+    <button on:click={() => {
+        console.log(faqitemsstore1);
+        console.log($faqitemsstore1)
+      }}>log store faqitemsstore1</button>
   </div>
 
   <h1>FAQ for "{name}"</h1>
@@ -34,6 +37,11 @@
     text-transform: uppercase;
     font-size: 4em;
     font-weight: 100;
+  }
+
+  .debug {
+    background-color: lighten(seagreen, 45%);
+    padding: 1rem;
   }
 
   @media (min-width: 640px) {
