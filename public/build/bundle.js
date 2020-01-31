@@ -1197,7 +1197,7 @@ var app = (function () {
     			t4 = space();
     			button = element("button");
     			button.textContent = "add";
-    			attr_dev(ul, "class", "svelte-146sbs6");
+    			attr_dev(ul, "class", "svelte-zvzkv4");
     			add_location(ul, file$1, 20, 0, 426);
     			attr_dev(input0, "type", "text");
     			add_location(input0, file$1, 31, 4, 653);
@@ -1206,7 +1206,7 @@ var app = (function () {
     			add_location(input1, file$1, 35, 4, 732);
     			add_location(label1, file$1, 33, 2, 708);
     			add_location(button, file$1, 37, 2, 785);
-    			attr_dev(div, "class", "svelte-146sbs6");
+    			attr_dev(div, "class", "svelte-zvzkv4");
     			add_location(div, file$1, 28, 0, 619);
     		},
     		l: function claim(nodes) {
@@ -1546,13 +1546,13 @@ var app = (function () {
     			create_component(faq1.$$.fragment);
     			add_location(h2, file$2, 11, 4, 197);
     			add_location(button, file$2, 12, 4, 216);
-    			attr_dev(div, "class", "debug svelte-1607vhf");
+    			attr_dev(div, "class", "debug svelte-1sria5s");
     			add_location(div, file$2, 10, 2, 173);
-    			attr_dev(h10, "class", "svelte-1607vhf");
+    			attr_dev(h10, "class", "svelte-1sria5s");
     			add_location(h10, file$2, 18, 2, 371);
-    			attr_dev(h11, "class", "svelte-1607vhf");
+    			attr_dev(h11, "class", "svelte-1sria5s");
     			add_location(h11, file$2, 21, 2, 435);
-    			attr_dev(main, "class", "svelte-1607vhf");
+    			attr_dev(main, "class", "svelte-1sria5s");
     			add_location(main, file$2, 9, 0, 164);
     		},
     		l: function claim(nodes) {

@@ -40,6 +40,7 @@
   }
 
   .debug {
+    display: none;
     background-color: lighten(seagreen, 45%);
     padding: 1rem;
   }

@@ -43,7 +43,7 @@ ul {
   padding-left: 0;
 }
 div {
-  background-color: lighten(orange, 45%);
+  background-color: lighten(steelblue, 45%);
   padding: 0.7rem 0.4rem;
 }
 </style>
