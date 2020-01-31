@@ -30,6 +30,9 @@ function createFAQItems() {
                 faqitem
             ]
         }),
+        delete: index => update(items => {
+            return items.splice(index, 1)
+        }),
         reset: () => set(faqitems_default)
     }
 }

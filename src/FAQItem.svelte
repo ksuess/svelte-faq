@@ -24,12 +24,17 @@
     // console.log("faqitem saved to ", $faqitems);
     // console.log("index", index);
   }
+
+  function deleteFAQItem(event) {
+    faqitems.delete(index);
+  }
 </script>
 
 
 <li>
   <div class="control">
-    <button class="destructive">delete</button>
+    <button class="destructive"
+      on:click={deleteFAQItem}>delete</button>
     <button on:click={() => editmode=!editmode}>edit</button>
   </div>
   {#if !editmode}
