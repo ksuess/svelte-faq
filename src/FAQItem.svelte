@@ -15,7 +15,6 @@
 
   function saveFAQItem(event) {
     // console.log("faqitem to save", faqitem);
-    // TODO save handler
     // why isn't it necessary to update the store explicitly with the new faqitem?
     // if it's really not necessary, the index is superfluous (no, see delete and add new item)
     // $faqitems[index] = faqitem;
@@ -39,6 +38,8 @@
   </div>
   {#if !editmode}
     <h2 on:click={toggleAnswer}>{faqitem.question}</h2>
+    <!-- conditional CSS class -->
+    <h3 class:hidden={!answervisible}>hope we can help with following answer. Mail us, we like to improve the help section. (TOTAKE: <i>conditional class</i>)</h3>
     {#if answervisible}
       <p transition:slide|local="{{duration:1000}}">
         {faqitem.answer}
@@ -78,5 +79,10 @@
     button {
       margin-right: .3rem;
     }
+  }
+
+
+  .hidden {
+    display: none;
   }
 </style>
