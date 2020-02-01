@@ -10,10 +10,21 @@
 <main>
   <div class="debug">
     <h2>DEBUG</h2>
-    <button on:click={() => {
-        console.log(faqitemsstore1);
-        console.log($faqitemsstore1)
-      }}>log store faqitemsstore1</button>
+    <ul>
+      <li>
+        <button on:click={() => {
+          console.log(faqitemsstore1);
+          console.log($faqitemsstore1)
+        }}>FAQ "{name}": log store faqitemsstore1</button>
+      </li>
+      <li>
+        <button on:click={() => {
+          console.log(faqitemsstore2);
+          console.log($faqitemsstore2)
+        }}>FAQ "Frameworks" log store faqitemsstore2</button>
+      </li>
+    </ul>
+
   </div>
 
   <h1>FAQ for "{name}"</h1>
@@ -43,6 +54,9 @@
     display: none;
     background-color: lighten(seagreen, 45%);
     padding: 1rem;
+    li {
+      list-style-type: none;
+    }
   }
 
   @media (min-width: 640px) {
