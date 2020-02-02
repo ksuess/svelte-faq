@@ -46,23 +46,10 @@
     <ul>
       <li>
         <button on:click={() => {
-          console.log(faqstore1);
-          console.log($faqstore1)
-        }}>FAQ "{name}": log store of FAQs 1</button>
-      </li>
-      <li>
-        <button on:click={() => {
-          console.log(faqstore2);
-          console.log($faqstore2)
-        }}>FAQ "Frameworks" log store of FAQs 2</button>
-      </li>
-      <!-- <li>
-        <button on:click={() => {
-            console.log("piep")
+            console.log("piep");
           }}>show</button>
-      </li> -->
+      </li>
     </ul>
-
   </div>
 
   <h1>FAQ for "{name}"</h1>
@@ -86,15 +73,6 @@
     text-transform: uppercase;
     font-size: 4em;
     font-weight: 100;
-  }
-
-  .debug {
-    /* display: none; */
-    background-color: lighten(seagreen, 45%);
-    padding: 1rem;
-    li {
-      list-style-type: none;
-    }
   }
 
   @media (min-width: 640px) {

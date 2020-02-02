@@ -18,6 +18,18 @@ TODO use external data
 </script>
 
 
+<div class="debug">
+  <h2>DEBUG</h2>
+  <ul>
+    <li>
+      <button on:click={() => {
+        console.log(faqitems);
+        console.log($faqitems)
+      }}>log store of FAQs</button>
+    </li>
+  </ul>
+</div>
+
 <ul>
   {#each $faqitems as faqitem, i} <!-- $faqitems: value (list of FAQ items) stored in store -->
     <FAQItem faqitem={faqitem}
@@ -26,7 +38,7 @@ TODO use external data
   {/each}
 </ul>
 
-<div>
+<div class="createFAQItem">
   <label>
     Question:
     <input type="text" bind:value={question}>
@@ -42,7 +54,7 @@ TODO use external data
 ul {
   padding-left: 0;
 }
-div {
+div.createFAQItem {
   background-color: lighten(steelblue, 45%);
   padding: 0.7rem 0.4rem;
 }

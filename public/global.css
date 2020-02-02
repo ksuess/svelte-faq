@@ -68,3 +68,12 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
+
+.debug {
+  /* display: none; */
+  background-color: #b7e7cc; // lighten(seagreen, 45%);
+  padding: 1rem;
+}
+.debug li {
+    list-style-type: none;
+  }
