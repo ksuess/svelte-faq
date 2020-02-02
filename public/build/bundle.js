@@ -5,6 +5,9 @@ var app = (function () {
 
     function noop() { }
     const identity = x => x;
+    function is_promise(value) {
+        return value && typeof value === 'object' && typeof value.then === 'function';
+    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -121,6 +124,9 @@ var app = (function () {
             input.value = value;
         }
     }
+    function set_style(node, key, value, important) {
+        node.style.setProperty(key, value, important ? 'important' : '');
+    }
     function toggle_class(element, name, toggle) {
         element.classList[toggle ? 'add' : 'remove'](name);
     }
@@ -189,6 +195,14 @@ var app = (function () {
     let current_component;
     function set_current_component(component) {
         current_component = component;
+    }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error(`Function called outside component initialization`);
+        return current_component;
+    }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
     }
 
     const dirty_components = [];
@@ -405,6 +419,72 @@ var app = (function () {
         };
     }
 
+    function handle_promise(promise, info) {
+        const token = info.token = {};
+        function update(type, index, key, value) {
+            if (info.token !== token)
+                return;
+            info.resolved = value;
+            let child_ctx = info.ctx;
+            if (key !== undefined) {
+                child_ctx = child_ctx.slice();
+                child_ctx[key] = value;
+            }
+            const block = type && (info.current = type)(child_ctx);
+            let needs_flush = false;
+            if (info.block) {
+                if (info.blocks) {
+                    info.blocks.forEach((block, i) => {
+                        if (i !== index && block) {
+                            group_outros();
+                            transition_out(block, 1, 1, () => {
+                                info.blocks[i] = null;
+                            });
+                            check_outros();
+                        }
+                    });
+                }
+                else {
+                    info.block.d(1);
+                }
+                block.c();
+                transition_in(block, 1);
+                block.m(info.mount(), info.anchor);
+                needs_flush = true;
+            }
+            info.block = block;
+            if (info.blocks)
+                info.blocks[index] = block;
+            if (needs_flush) {
+                flush();
+            }
+        }
+        if (is_promise(promise)) {
+            const current_component = get_current_component();
+            promise.then(value => {
+                set_current_component(current_component);
+                update(info.then, 1, info.value, value);
+                set_current_component(null);
+            }, error => {
+                set_current_component(current_component);
+                update(info.catch, 2, info.error, error);
+                set_current_component(null);
+            });
+            // if we previously had a then/catch block, destroy it
+            if (info.current !== info.pending) {
+                update(info.pending, 0);
+                return true;
+            }
+        }
+        else {
+            if (info.current !== info.then) {
+                update(info.then, 1, info.value, promise);
+                return true;
+            }
+            info.resolved = promise;
+        }
+    }
+
     const globals = (typeof window !== 'undefined' ? window : global);
     function create_component(block) {
         block && block.c();
@@ -575,6 +655,83 @@ var app = (function () {
             this.$destroy = () => {
                 console.warn(`Component was already destroyed`); // eslint-disable-line no-console
             };
+        }
+    }
+
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = [];
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (let i = 0; i < subscribers.length; i += 1) {
+                        const s = subscribers[i];
+                        s[1]();
+                        subscriber_queue.push(s, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.push(subscriber);
+            if (subscribers.length === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                const index = subscribers.indexOf(subscriber);
+                if (index !== -1) {
+                    subscribers.splice(index, 1);
+                }
+                if (subscribers.length === 0) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
+
+    // store with args for initial data
+    // with args it's possible to use function for multiple independent stores of same type for same component which is consumed more than once
+    function createFAQItems(items) {
+        const {subscribe, set, update} = writable(items);
+
+        return {
+            subscribe,
+            set,
+            create: faqitem => update(items => {
+                // console.log('create faqitem', faqitem);
+                return [
+                    ...items,
+                    faqitem
+                ]
+            }),
+            delete: index => update(items => {
+                // console.log(`FAQItem with ${index} deleted`);
+                // console.log("Items before deleting action", items);
+                items.splice(index, 1);
+                return items
+            }),
+            reset: () => set(items)
         }
     }
 
@@ -1143,91 +1300,59 @@ var app = (function () {
 
     /* src/FAQ.svelte generated by Svelte v3.18.1 */
 
-    const { console: console_1$1 } = globals;
+    const { Error: Error_1, console: console_1$1 } = globals;
     const file$1 = "src/FAQ.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
-    	child_ctx[10] = i;
+    	child_ctx[12] = list[i];
+    	child_ctx[14] = i;
     	return child_ctx;
     }
 
-    // (34:2) {#each $faqitems as faqitem, i}
-    function create_each_block(ctx) {
-    	let current;
-
-    	const faqitem = new FAQItem({
-    			props: {
-    				faqitem: /*faqitem*/ ctx[8],
-    				index: /*i*/ ctx[10],
-    				faqitems: /*faqitems*/ ctx[0]
-    			},
-    			$$inline: true
-    		});
+    // (61:0) {:catch error}
+    function create_catch_block(ctx) {
+    	let p;
+    	let t_value = /*error*/ ctx[11].message + "";
+    	let t;
 
     	const block = {
     		c: function create() {
-    			create_component(faqitem.$$.fragment);
+    			p = element("p");
+    			t = text(t_value);
+    			set_style(p, "color", "red");
+    			add_location(p, file$1, 61, 2, 1386);
     		},
     		m: function mount(target, anchor) {
-    			mount_component(faqitem, target, anchor);
-    			current = true;
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t);
     		},
     		p: function update(ctx, dirty) {
-    			const faqitem_changes = {};
-    			if (dirty & /*$faqitems*/ 8) faqitem_changes.faqitem = /*faqitem*/ ctx[8];
-    			if (dirty & /*faqitems*/ 1) faqitem_changes.faqitems = /*faqitems*/ ctx[0];
-    			faqitem.$set(faqitem_changes);
+    			if (dirty & /*promise*/ 8 && t_value !== (t_value = /*error*/ ctx[11].message + "")) set_data_dev(t, t_value);
     		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(faqitem.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(faqitem.$$.fragment, local);
-    			current = false;
-    		},
+    		i: noop,
+    		o: noop,
     		d: function destroy(detaching) {
-    			destroy_component(faqitem, detaching);
+    			if (detaching) detach_dev(p);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block.name,
-    		type: "each",
-    		source: "(34:2) {#each $faqitems as faqitem, i}",
+    		id: create_catch_block.name,
+    		type: "catch",
+    		source: "(61:0) {:catch error}",
     		ctx
     	});
 
     	return block;
     }
 
-    function create_fragment$1(ctx) {
-    	let div0;
-    	let h2;
-    	let t1;
-    	let ul0;
-    	let li;
-    	let button0;
-    	let t3;
-    	let ul1;
-    	let t4;
-    	let div1;
-    	let label0;
-    	let t5;
-    	let input0;
-    	let t6;
-    	let label1;
-    	let t7;
-    	let input1;
-    	let t8;
-    	let button1;
+    // (53:0) {:then}
+    function create_then_block(ctx) {
+    	let ul;
     	let current;
-    	let dispose;
-    	let each_value = /*$faqitems*/ ctx[3];
+    	let each_value = /*$faqitems*/ ctx[4];
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -1240,94 +1365,27 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			h2 = element("h2");
-    			h2.textContent = "DEBUG";
-    			t1 = space();
-    			ul0 = element("ul");
-    			li = element("li");
-    			button0 = element("button");
-    			button0.textContent = "log store of FAQs";
-    			t3 = space();
-    			ul1 = element("ul");
+    			ul = element("ul");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			t4 = space();
-    			div1 = element("div");
-    			label0 = element("label");
-    			t5 = text("Question:\n    ");
-    			input0 = element("input");
-    			t6 = space();
-    			label1 = element("label");
-    			t7 = text("Answer:\n    ");
-    			input1 = element("input");
-    			t8 = space();
-    			button1 = element("button");
-    			button1.textContent = "add";
-    			add_location(h2, file$1, 21, 2, 448);
-    			add_location(button0, file$1, 24, 6, 485);
-    			add_location(li, file$1, 23, 4, 474);
-    			attr_dev(ul0, "class", "svelte-1jhst6z");
-    			add_location(ul0, file$1, 22, 2, 465);
-    			attr_dev(div0, "class", "debug");
-    			add_location(div0, file$1, 20, 0, 426);
-    			attr_dev(ul1, "class", "svelte-1jhst6z");
-    			add_location(ul1, file$1, 32, 0, 635);
-    			attr_dev(input0, "type", "text");
-    			add_location(input0, file$1, 43, 4, 884);
-    			add_location(label0, file$1, 41, 2, 858);
-    			attr_dev(input1, "type", "text");
-    			add_location(input1, file$1, 47, 4, 963);
-    			add_location(label1, file$1, 45, 2, 939);
-    			add_location(button1, file$1, 49, 2, 1016);
-    			attr_dev(div1, "class", "createFAQItem svelte-1jhst6z");
-    			add_location(div1, file$1, 40, 0, 828);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    			attr_dev(ul, "class", "svelte-1jhst6z");
+    			add_location(ul, file$1, 53, 2, 1156);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			append_dev(div0, h2);
-    			append_dev(div0, t1);
-    			append_dev(div0, ul0);
-    			append_dev(ul0, li);
-    			append_dev(li, button0);
-    			insert_dev(target, t3, anchor);
-    			insert_dev(target, ul1, anchor);
+    			insert_dev(target, ul, anchor);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(ul1, null);
+    				each_blocks[i].m(ul, null);
     			}
 
-    			insert_dev(target, t4, anchor);
-    			insert_dev(target, div1, anchor);
-    			append_dev(div1, label0);
-    			append_dev(label0, t5);
-    			append_dev(label0, input0);
-    			set_input_value(input0, /*question*/ ctx[1]);
-    			append_dev(div1, t6);
-    			append_dev(div1, label1);
-    			append_dev(label1, t7);
-    			append_dev(label1, input1);
-    			set_input_value(input1, /*answer*/ ctx[2]);
-    			append_dev(div1, t8);
-    			append_dev(div1, button1);
     			current = true;
-
-    			dispose = [
-    				listen_dev(button0, "click", /*click_handler*/ ctx[5], false, false, false),
-    				listen_dev(input0, "input", /*input0_input_handler*/ ctx[6]),
-    				listen_dev(input1, "input", /*input1_input_handler*/ ctx[7]),
-    				listen_dev(button1, "click", /*createFAQItem*/ ctx[4], false, false, false)
-    			];
     		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*$faqitems, faqitems*/ 9) {
-    				each_value = /*$faqitems*/ ctx[3];
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$faqitems, faqitems*/ 17) {
+    				each_value = /*$faqitems*/ ctx[4];
     				let i;
 
     				for (i = 0; i < each_value.length; i += 1) {
@@ -1340,7 +1398,7 @@ var app = (function () {
     						each_blocks[i] = create_each_block(child_ctx);
     						each_blocks[i].c();
     						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(ul1, null);
+    						each_blocks[i].m(ul, null);
     					}
     				}
 
@@ -1351,14 +1409,6 @@ var app = (function () {
     				}
 
     				check_outros();
-    			}
-
-    			if (dirty & /*question*/ 2 && input0.value !== /*question*/ ctx[1]) {
-    				set_input_value(input0, /*question*/ ctx[1]);
-    			}
-
-    			if (dirty & /*answer*/ 4 && input1.value !== /*answer*/ ctx[2]) {
-    				set_input_value(input1, /*answer*/ ctx[2]);
     			}
     		},
     		i: function intro(local) {
@@ -1380,10 +1430,255 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ul);
+    			destroy_each(each_blocks, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_then_block.name,
+    		type: "then",
+    		source: "(53:0) {:then}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (55:4) {#each $faqitems as faqitem, i}
+    function create_each_block(ctx) {
+    	let current;
+
+    	const faqitem = new FAQItem({
+    			props: {
+    				faqitem: /*faqitem*/ ctx[12],
+    				index: /*i*/ ctx[14],
+    				faqitems: /*faqitems*/ ctx[0]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(faqitem.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(faqitem, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const faqitem_changes = {};
+    			if (dirty & /*$faqitems*/ 16) faqitem_changes.faqitem = /*faqitem*/ ctx[12];
+    			if (dirty & /*faqitems*/ 1) faqitem_changes.faqitems = /*faqitems*/ ctx[0];
+    			faqitem.$set(faqitem_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(faqitem.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(faqitem.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(faqitem, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(55:4) {#each $faqitems as faqitem, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (51:16)    <p>...waiting</p> {:then}
+    function create_pending_block(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "...waiting";
+    			add_location(p, file$1, 51, 2, 1128);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block.name,
+    		type: "pending",
+    		source: "(51:16)    <p>...waiting</p> {:then}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$1(ctx) {
+    	let div0;
+    	let h2;
+    	let t1;
+    	let ul;
+    	let li;
+    	let button0;
+    	let t3;
+    	let promise_1;
+    	let t4;
+    	let div1;
+    	let label0;
+    	let t5;
+    	let input0;
+    	let t6;
+    	let label1;
+    	let t7;
+    	let input1;
+    	let t8;
+    	let button1;
+    	let current;
+    	let dispose;
+
+    	let info = {
+    		ctx,
+    		current: null,
+    		token: null,
+    		pending: create_pending_block,
+    		then: create_then_block,
+    		catch: create_catch_block,
+    		error: 11,
+    		blocks: [,,,]
+    	};
+
+    	handle_promise(promise_1 = /*promise*/ ctx[3], info);
+
+    	const block = {
+    		c: function create() {
+    			div0 = element("div");
+    			h2 = element("h2");
+    			h2.textContent = "DEBUG";
+    			t1 = space();
+    			ul = element("ul");
+    			li = element("li");
+    			button0 = element("button");
+    			button0.textContent = "log store of FAQs";
+    			t3 = space();
+    			info.block.c();
+    			t4 = space();
+    			div1 = element("div");
+    			label0 = element("label");
+    			t5 = text("Question:\n    ");
+    			input0 = element("input");
+    			t6 = space();
+    			label1 = element("label");
+    			t7 = text("Answer:\n    ");
+    			input1 = element("input");
+    			t8 = space();
+    			button1 = element("button");
+    			button1.textContent = "add";
+    			add_location(h2, file$1, 38, 2, 921);
+    			add_location(button0, file$1, 41, 6, 958);
+    			add_location(li, file$1, 40, 4, 947);
+    			attr_dev(ul, "class", "svelte-1jhst6z");
+    			add_location(ul, file$1, 39, 2, 938);
+    			attr_dev(div0, "class", "debug");
+    			add_location(div0, file$1, 37, 0, 899);
+    			attr_dev(input0, "type", "text");
+    			add_location(input0, file$1, 67, 4, 1494);
+    			add_location(label0, file$1, 65, 2, 1468);
+    			attr_dev(input1, "type", "text");
+    			add_location(input1, file$1, 71, 4, 1573);
+    			add_location(label1, file$1, 69, 2, 1549);
+    			add_location(button1, file$1, 73, 2, 1626);
+    			attr_dev(div1, "class", "createFAQItem svelte-1jhst6z");
+    			add_location(div1, file$1, 64, 0, 1438);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div0, anchor);
+    			append_dev(div0, h2);
+    			append_dev(div0, t1);
+    			append_dev(div0, ul);
+    			append_dev(ul, li);
+    			append_dev(li, button0);
+    			insert_dev(target, t3, anchor);
+    			info.block.m(target, info.anchor = anchor);
+    			info.mount = () => t4.parentNode;
+    			info.anchor = t4;
+    			insert_dev(target, t4, anchor);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, label0);
+    			append_dev(label0, t5);
+    			append_dev(label0, input0);
+    			set_input_value(input0, /*question*/ ctx[1]);
+    			append_dev(div1, t6);
+    			append_dev(div1, label1);
+    			append_dev(label1, t7);
+    			append_dev(label1, input1);
+    			set_input_value(input1, /*answer*/ ctx[2]);
+    			append_dev(div1, t8);
+    			append_dev(div1, button1);
+    			current = true;
+
+    			dispose = [
+    				listen_dev(button0, "click", /*click_handler*/ ctx[8], false, false, false),
+    				listen_dev(input0, "input", /*input0_input_handler*/ ctx[9]),
+    				listen_dev(input1, "input", /*input1_input_handler*/ ctx[10]),
+    				listen_dev(button1, "click", /*createFAQItem*/ ctx[5], false, false, false)
+    			];
+    		},
+    		p: function update(new_ctx, [dirty]) {
+    			ctx = new_ctx;
+    			info.ctx = ctx;
+
+    			if (dirty & /*promise*/ 8 && promise_1 !== (promise_1 = /*promise*/ ctx[3]) && handle_promise(promise_1, info)) ; else {
+    				const child_ctx = ctx.slice();
+    				info.block.p(child_ctx, dirty);
+    			}
+
+    			if (dirty & /*question*/ 2 && input0.value !== /*question*/ ctx[1]) {
+    				set_input_value(input0, /*question*/ ctx[1]);
+    			}
+
+    			if (dirty & /*answer*/ 4 && input1.value !== /*answer*/ ctx[2]) {
+    				set_input_value(input1, /*answer*/ ctx[2]);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(info.block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			for (let i = 0; i < 3; i += 1) {
+    				const block = info.blocks[i];
+    				transition_out(block);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
     			if (detaching) detach_dev(div0);
     			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(ul1);
-    			destroy_each(each_blocks, detaching);
+    			info.block.d(detaching);
+    			info.token = null;
+    			info = null;
     			if (detaching) detach_dev(t4);
     			if (detaching) detach_dev(div1);
     			run_all(dispose);
@@ -1404,10 +1699,11 @@ var app = (function () {
     function instance$1($$self, $$props, $$invalidate) {
     	let $faqitems,
     		$$unsubscribe_faqitems = noop,
-    		$$subscribe_faqitems = () => ($$unsubscribe_faqitems(), $$unsubscribe_faqitems = subscribe(faqitems, $$value => $$invalidate(3, $faqitems = $$value)), faqitems);
+    		$$subscribe_faqitems = () => ($$unsubscribe_faqitems(), $$unsubscribe_faqitems = subscribe(faqitems, $$value => $$invalidate(4, $faqitems = $$value)), faqitems);
 
     	$$self.$$.on_destroy.push(() => $$unsubscribe_faqitems());
-    	let { faqitems = undefined } = $$props; // store must be provided by parent
+    	let { apiURL = undefined } = $$props;
+    	let faqitems = undefined; // store: variable, not const, because we create / initialize it onMount
     	validate_store(faqitems, "faqitems");
     	$$subscribe_faqitems();
     	let question = "";
@@ -1421,7 +1717,29 @@ var app = (function () {
     		$$invalidate(2, answer = "");
     	}
 
-    	const writable_props = ["faqitems"];
+    	let promise = getFAQItems();
+
+    	async function getFAQItems() {
+    		const response = await fetch(apiURL);
+    		const data = await response.json();
+
+    		// creating store
+    		$$subscribe_faqitems($$invalidate(0, faqitems = await createFAQItems(data)));
+
+    		if (response.ok) {
+    			return faqitems;
+    		} else {
+    			throw new Error(data);
+    		}
+    	}
+
+    	
+
+    	onMount(() => {
+    		$$invalidate(3, promise = getFAQItems());
+    	});
+
+    	const writable_props = ["apiURL"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$1.warn(`<FAQ> was created with unknown prop '${key}'`);
@@ -1443,17 +1761,26 @@ var app = (function () {
     	}
 
     	$$self.$set = $$props => {
-    		if ("faqitems" in $$props) $$subscribe_faqitems($$invalidate(0, faqitems = $$props.faqitems));
+    		if ("apiURL" in $$props) $$invalidate(6, apiURL = $$props.apiURL);
     	};
 
     	$$self.$capture_state = () => {
-    		return { faqitems, question, answer, $faqitems };
+    		return {
+    			apiURL,
+    			faqitems,
+    			question,
+    			answer,
+    			promise,
+    			$faqitems
+    		};
     	};
 
     	$$self.$inject_state = $$props => {
+    		if ("apiURL" in $$props) $$invalidate(6, apiURL = $$props.apiURL);
     		if ("faqitems" in $$props) $$subscribe_faqitems($$invalidate(0, faqitems = $$props.faqitems));
     		if ("question" in $$props) $$invalidate(1, question = $$props.question);
     		if ("answer" in $$props) $$invalidate(2, answer = $$props.answer);
+    		if ("promise" in $$props) $$invalidate(3, promise = $$props.promise);
     		if ("$faqitems" in $$props) faqitems.set($faqitems = $$props.$faqitems);
     	};
 
@@ -1461,8 +1788,11 @@ var app = (function () {
     		faqitems,
     		question,
     		answer,
+    		promise,
     		$faqitems,
     		createFAQItem,
+    		apiURL,
+    		getFAQItems,
     		click_handler,
     		input0_input_handler,
     		input1_input_handler
@@ -1472,7 +1802,7 @@ var app = (function () {
     class FAQ extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { faqitems: 0 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { apiURL: 6 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1482,96 +1812,18 @@ var app = (function () {
     		});
     	}
 
-    	get faqitems() {
-    		throw new Error("<FAQ>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	get apiURL() {
+    		throw new Error_1("<FAQ>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set faqitems(value) {
-    		throw new Error("<FAQ>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	set apiURL(value) {
+    		throw new Error_1("<FAQ>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
-    }
-
-    const subscriber_queue = [];
-    /**
-     * Create a `Writable` store that allows both updating and reading by subscription.
-     * @param {*=}value initial value
-     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
-     */
-    function writable(value, start = noop) {
-        let stop;
-        const subscribers = [];
-        function set(new_value) {
-            if (safe_not_equal(value, new_value)) {
-                value = new_value;
-                if (stop) { // store is ready
-                    const run_queue = !subscriber_queue.length;
-                    for (let i = 0; i < subscribers.length; i += 1) {
-                        const s = subscribers[i];
-                        s[1]();
-                        subscriber_queue.push(s, value);
-                    }
-                    if (run_queue) {
-                        for (let i = 0; i < subscriber_queue.length; i += 2) {
-                            subscriber_queue[i][0](subscriber_queue[i + 1]);
-                        }
-                        subscriber_queue.length = 0;
-                    }
-                }
-            }
-        }
-        function update(fn) {
-            set(fn(value));
-        }
-        function subscribe(run, invalidate = noop) {
-            const subscriber = [run, invalidate];
-            subscribers.push(subscriber);
-            if (subscribers.length === 1) {
-                stop = start(set) || noop;
-            }
-            run(value);
-            return () => {
-                const index = subscribers.indexOf(subscriber);
-                if (index !== -1) {
-                    subscribers.splice(index, 1);
-                }
-                if (subscribers.length === 0) {
-                    stop();
-                    stop = null;
-                }
-            };
-        }
-        return { set, update, subscribe };
-    }
-
-    // store with args for initial data
-    // with args it's possible to use function for multiple independent stores of same type for same component which is consumed more than once
-    function createFAQItems(items) {
-        const {subscribe, set, update} = writable(items);
-
-        return {
-            subscribe,
-            set,
-            create: faqitem => update(items => {
-                // console.log('create faqitem', faqitem);
-                return [
-                    ...items,
-                    faqitem
-                ]
-            }),
-            delete: index => update(items => {
-                // console.log(`FAQItem with ${index} deleted`);
-                // console.log("Items before deleting action", items);
-                items.splice(index, 1);
-                return items
-            }),
-            reset: () => set(items)
-        }
     }
 
     /* src/App.svelte generated by Svelte v3.18.1 */
 
     const { console: console_1$2 } = globals;
-
     const file$2 = "src/App.svelte";
 
     function create_fragment$2(ctx) {
@@ -1595,12 +1847,12 @@ var app = (function () {
     	let dispose;
 
     	const faq0 = new FAQ({
-    			props: { faqitems: /*faqstore1*/ ctx[1] },
+    			props: { apiURL: /*url1*/ ctx[1] },
     			$$inline: true
     		});
 
     	const faq1 = new FAQ({
-    			props: { faqitems: /*faqstore2*/ ctx[2] },
+    			props: { apiURL: /*url2*/ ctx[2] },
     			$$inline: true
     		});
 
@@ -1627,18 +1879,18 @@ var app = (function () {
     			h11.textContent = "FAQ for \"Frameworks\"";
     			t10 = space();
     			create_component(faq1.$$.fragment);
-    			add_location(h2, file$2, 44, 4, 1502);
-    			add_location(button, file$2, 47, 8, 1545);
-    			add_location(li, file$2, 46, 6, 1532);
-    			add_location(ul, file$2, 45, 4, 1521);
+    			add_location(h2, file$2, 12, 4, 166);
+    			add_location(button, file$2, 15, 8, 209);
+    			add_location(li, file$2, 14, 6, 196);
+    			add_location(ul, file$2, 13, 4, 185);
     			attr_dev(div, "class", "debug");
-    			add_location(div, file$2, 43, 2, 1478);
+    			add_location(div, file$2, 11, 2, 142);
     			attr_dev(h10, "class", "svelte-rgfnp2");
-    			add_location(h10, file$2, 54, 2, 1665);
+    			add_location(h10, file$2, 22, 2, 329);
     			attr_dev(h11, "class", "svelte-rgfnp2");
-    			add_location(h11, file$2, 57, 2, 1724);
+    			add_location(h11, file$2, 25, 2, 381);
     			attr_dev(main, "class", "svelte-rgfnp2");
-    			add_location(main, file$2, 42, 0, 1469);
+    			add_location(main, file$2, 10, 0, 133);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1663,7 +1915,7 @@ var app = (function () {
     			append_dev(main, t10);
     			mount_component(faq1, main, null);
     			current = true;
-    			dispose = listen_dev(button, "click", /*click_handler*/ ctx[5], false, false, false);
+    			dispose = listen_dev(button, "click", /*click_handler*/ ctx[3], false, false, false);
     		},
     		p: function update(ctx, [dirty]) {
     			if (!current || dirty & /*name*/ 1) set_data_dev(t5, /*name*/ ctx[0]);
@@ -1700,38 +1952,8 @@ var app = (function () {
 
     function instance$2($$self, $$props, $$invalidate) {
     	let { name } = $$props;
-
-    	// stores for multiple FAQs
-    	const faqitems_plone = [
-    		{
-    			question: "What does the Plone Foundation do?",
-    			answer: `The mission of the Plone Foundation is to protect and promote Plone.
-              The Foundation provides marketing assistance, awareness, and
-              evangelism assistance to the Plone community. The Foundation also
-              assists with development funding and coordination of funding for
-              large feature implementations. In this way, our role is similar to
-              the role of the Apache Software Foundation and its relationship with
-              the Apache Project.`
-    		},
-    		{
-    			question: "Who can join the Plone Foundation?",
-    			answer: `Everyone contributing to Plone Software, Plone documentation, organizing events or doing something good for PF.`
-    		},
-    		{
-    			question: "When is the next conference?",
-    			answer: `November in Belgium`
-    		}
-    	];
-
-    	const faqitems_frameworks = [
-    		{
-    			question: "Why do I need a framework?",
-    			answer: "It saves time. You can skip to important tasks."
-    		}
-    	];
-
-    	const faqstore1 = createFAQItems(faqitems_plone);
-    	const faqstore2 = createFAQItems(faqitems_frameworks);
+    	let url1 = "http://localhost:3002/";
+    	let url2 = url1;
     	const writable_props = ["name"];
 
     	Object.keys($$props).forEach(key => {
@@ -1747,14 +1969,16 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => {
-    		return { name };
+    		return { name, url1, url2 };
     	};
 
     	$$self.$inject_state = $$props => {
     		if ("name" in $$props) $$invalidate(0, name = $$props.name);
+    		if ("url1" in $$props) $$invalidate(1, url1 = $$props.url1);
+    		if ("url2" in $$props) $$invalidate(2, url2 = $$props.url2);
     	};
 
-    	return [name, faqstore1, faqstore2, faqitems_plone, faqitems_frameworks, click_handler];
+    	return [name, url1, url2, click_handler];
     }
 
     class App extends SvelteComponentDev {

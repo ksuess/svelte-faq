@@ -1,11 +1,11 @@
-<!--
-TODO use external data
- -->
-
 <script>
+  import {onMount} from 'svelte';
+  import {createFAQItems} from './stores.js'
   import FAQItem from './FAQItem.svelte'
 
-  export let faqitems = undefined; // store must be provided by parent
+  export let apiURL = undefined;
+  let faqitems = undefined; // store: variable, not const, because we create / initialize it onMount
+
   let question = '';
   let answer = '';
 
@@ -15,6 +15,23 @@ TODO use external data
     question = '';
     answer = '';
   }
+
+  let promise = getFAQItems();
+  async function getFAQItems() {
+    const response = await fetch(apiURL);
+    const data = await response.json();
+    // creating store
+    faqitems = await createFAQItems(data);
+    if (response.ok) {
+      return faqitems;
+    } else {
+      throw new Error(data);
+    }
+  };
+
+  onMount(() => {
+    promise = getFAQItems();
+  })
 </script>
 
 
@@ -30,13 +47,20 @@ TODO use external data
   </ul>
 </div>
 
-<ul>
-  {#each $faqitems as faqitem, i} <!-- $faqitems: value (list of FAQ items) stored in store -->
-    <FAQItem faqitem={faqitem}
-      index={i}
-      faqitems={faqitems}/>
-  {/each}
-</ul>
+
+{#await promise}
+  <p>...waiting</p>
+{:then}
+  <ul>
+    {#each $faqitems as faqitem, i} <!-- $faqitems: value (list of FAQ items) stored in store faqitems -->
+      <FAQItem faqitem={faqitem}
+        index={i}
+        faqitems={faqitems}/>
+    {/each}
+  </ul>
+{:catch error}
+  <p style="color: red">{error.message}</p>
+{/await}
 
 <div class="createFAQItem">
   <label>
