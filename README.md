@@ -1,6 +1,7 @@
 # FAQ with Svelte
 
 This is an example app for stores, unique for multiple instances of components.
+Demo: https://ksuess.github.io/svelte-faq/index.html
 
 ## Get started
 
