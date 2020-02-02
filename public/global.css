@@ -70,7 +70,7 @@ button:focus {
 }
 
 .debug {
-  /* display: none; */
+  display: none;
   background-color: #b7e7cc; // lighten(seagreen, 45%);
   padding: 1rem;
 }
