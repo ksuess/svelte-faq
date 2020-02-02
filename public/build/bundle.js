@@ -1995,23 +1995,20 @@ var app = (function () {
     	let button;
     	let t3;
     	let h10;
-    	let t4;
     	let t5;
     	let t6;
-    	let t7;
-    	let t8;
     	let h11;
-    	let t10;
+    	let t8;
     	let current;
     	let dispose;
 
     	const faq0 = new FAQ({
-    			props: { apiURL: /*url1*/ ctx[1] },
+    			props: { apiURL: /*url1*/ ctx[0] },
     			$$inline: true
     		});
 
     	const faq1 = new FAQ({
-    			props: { apiURL: /*url2*/ ctx[2] },
+    			props: { apiURL: /*url2*/ ctx[1] },
     			$$inline: true
     		});
 
@@ -2028,28 +2025,26 @@ var app = (function () {
     			button.textContent = "show";
     			t3 = space();
     			h10 = element("h1");
-    			t4 = text("FAQ for \"");
-    			t5 = text(/*name*/ ctx[0]);
-    			t6 = text("\"");
-    			t7 = space();
+    			h10.textContent = "FAQ for \"Garten\"";
+    			t5 = space();
     			create_component(faq0.$$.fragment);
-    			t8 = space();
+    			t6 = space();
     			h11 = element("h1");
-    			h11.textContent = "FAQ for \"Frameworks\"";
-    			t10 = space();
+    			h11.textContent = "FAQ for \"Plone\"";
+    			t8 = space();
     			create_component(faq1.$$.fragment);
-    			add_location(h2, file$2, 12, 4, 216);
-    			add_location(button, file$2, 15, 8, 259);
-    			add_location(li, file$2, 14, 6, 246);
-    			add_location(ul, file$2, 13, 4, 235);
+    			add_location(h2, file$2, 12, 4, 299);
+    			add_location(button, file$2, 15, 8, 342);
+    			add_location(li, file$2, 14, 6, 329);
+    			add_location(ul, file$2, 13, 4, 318);
     			attr_dev(div, "class", "debug");
-    			add_location(div, file$2, 11, 2, 192);
+    			add_location(div, file$2, 11, 2, 275);
     			attr_dev(h10, "class", "svelte-x89gwl");
-    			add_location(h10, file$2, 22, 2, 379);
+    			add_location(h10, file$2, 22, 2, 462);
     			attr_dev(h11, "class", "svelte-x89gwl");
-    			add_location(h11, file$2, 25, 2, 431);
+    			add_location(h11, file$2, 25, 2, 514);
     			attr_dev(main, "class", "svelte-x89gwl");
-    			add_location(main, file$2, 10, 0, 183);
+    			add_location(main, file$2, 10, 0, 266);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2064,21 +2059,16 @@ var app = (function () {
     			append_dev(li, button);
     			append_dev(main, t3);
     			append_dev(main, h10);
-    			append_dev(h10, t4);
-    			append_dev(h10, t5);
-    			append_dev(h10, t6);
-    			append_dev(main, t7);
+    			append_dev(main, t5);
     			mount_component(faq0, main, null);
-    			append_dev(main, t8);
+    			append_dev(main, t6);
     			append_dev(main, h11);
-    			append_dev(main, t10);
+    			append_dev(main, t8);
     			mount_component(faq1, main, null);
     			current = true;
     			dispose = listen_dev(button, "click", /*click_handler*/ ctx[3], false, false, false);
     		},
-    		p: function update(ctx, [dirty]) {
-    			if (!current || dirty & /*name*/ 1) set_data_dev(t5, /*name*/ ctx[0]);
-    		},
+    		p: noop,
     		i: function intro(local) {
     			if (current) return;
     			transition_in(faq0.$$.fragment, local);
@@ -2111,8 +2101,8 @@ var app = (function () {
 
     function instance$2($$self, $$props, $$invalidate) {
     	let { name } = $$props;
-    	let url1 = "https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems.json";
-    	let url2 = url1;
+    	let url1 = "https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems_garten.json";
+    	let url2 = "https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems_plone.json";
     	const writable_props = ["name"];
 
     	Object.keys($$props).forEach(key => {
@@ -2124,7 +2114,7 @@ var app = (function () {
     	};
 
     	$$self.$set = $$props => {
-    		if ("name" in $$props) $$invalidate(0, name = $$props.name);
+    		if ("name" in $$props) $$invalidate(2, name = $$props.name);
     	};
 
     	$$self.$capture_state = () => {
@@ -2132,18 +2122,18 @@ var app = (function () {
     	};
 
     	$$self.$inject_state = $$props => {
-    		if ("name" in $$props) $$invalidate(0, name = $$props.name);
-    		if ("url1" in $$props) $$invalidate(1, url1 = $$props.url1);
-    		if ("url2" in $$props) $$invalidate(2, url2 = $$props.url2);
+    		if ("name" in $$props) $$invalidate(2, name = $$props.name);
+    		if ("url1" in $$props) $$invalidate(0, url1 = $$props.url1);
+    		if ("url2" in $$props) $$invalidate(1, url2 = $$props.url2);
     	};
 
-    	return [name, url1, url2, click_handler];
+    	return [url1, url2, name, click_handler];
     }
 
     class App extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { name: 0 });
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { name: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -2155,7 +2145,7 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*name*/ ctx[0] === undefined && !("name" in props)) {
+    		if (/*name*/ ctx[2] === undefined && !("name" in props)) {
     			console_1$2.warn("<App> was created without expected prop 'name'");
     		}
     	}

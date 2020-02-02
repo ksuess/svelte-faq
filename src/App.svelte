@@ -3,8 +3,8 @@
 
   export let name;
 
-  let url1 = 'https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems.json';
-  let url2 = url1;
+  let url1 = 'https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems_garten.json';
+  let url2 = 'https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems_plone.json';
 </script>
 
 
@@ -20,10 +20,10 @@
     </ul>
   </div>
 
-  <h1>FAQ for "{name}"</h1>
+  <h1>FAQ for "Garten"</h1>
   <FAQ apiURL={url1}/>
 
-  <h1>FAQ for "Frameworks"</h1>
+  <h1>FAQ for "Plone"</h1>
   <FAQ apiURL={url2}/>
 </main>
 
