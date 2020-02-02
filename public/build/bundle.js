@@ -1303,37 +1303,138 @@ var app = (function () {
     const { Error: Error_1, console: console_1$1 } = globals;
     const file$1 = "src/FAQ.svelte";
 
-    function get_each_context(ctx, list, i) {
+    function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[12] = list[i];
-    	child_ctx[14] = i;
+    	child_ctx[13] = list[i];
+    	child_ctx[15] = i;
     	return child_ctx;
     }
 
-    // (61:0) {:catch error}
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[13] = list[i];
+    	child_ctx[15] = i;
+    	return child_ctx;
+    }
+
+    // (82:0) {:catch error}
     function create_catch_block(ctx) {
     	let p;
-    	let t_value = /*error*/ ctx[11].message + "";
-    	let t;
+    	let t0_value = /*error*/ ctx[12].message + "";
+    	let t0;
+    	let t1;
+    	let t2;
+    	let t3;
+    	let h3;
+    	let t5;
+    	let ul;
+    	let current;
+    	let each_value_1 = /*faqitems_plone*/ ctx[6];
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
 
     	const block = {
     		c: function create() {
     			p = element("p");
-    			t = text(t_value);
+    			t0 = text(t0_value);
+    			t1 = text(" url: ");
+    			t2 = text(/*apiURL*/ ctx[0]);
+    			t3 = space();
+    			h3 = element("h3");
+    			h3.textContent = "Default Content on network error:";
+    			t5 = space();
+    			ul = element("ul");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
     			set_style(p, "color", "red");
-    			add_location(p, file$1, 61, 2, 1386);
+    			add_location(p, file$1, 82, 2, 2329);
+    			add_location(h3, file$1, 84, 2, 2388);
+    			set_style(ul, "color", "orange");
+    			attr_dev(ul, "class", "svelte-1jhst6z");
+    			add_location(ul, file$1, 85, 2, 2433);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
-    			append_dev(p, t);
+    			append_dev(p, t0);
+    			append_dev(p, t1);
+    			append_dev(p, t2);
+    			insert_dev(target, t3, anchor);
+    			insert_dev(target, h3, anchor);
+    			insert_dev(target, t5, anchor);
+    			insert_dev(target, ul, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(ul, null);
+    			}
+
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*promise*/ 8 && t_value !== (t_value = /*error*/ ctx[11].message + "")) set_data_dev(t, t_value);
+    			if ((!current || dirty & /*promise*/ 16) && t0_value !== (t0_value = /*error*/ ctx[12].message + "")) set_data_dev(t0, t0_value);
+    			if (!current || dirty & /*apiURL*/ 1) set_data_dev(t2, /*apiURL*/ ctx[0]);
+
+    			if (dirty & /*faqitems_plone, faqitems*/ 66) {
+    				each_value_1 = /*faqitems_plone*/ ctx[6];
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(ul, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
     		},
-    		i: noop,
-    		o: noop,
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value_1.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p);
+    			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(h3);
+    			if (detaching) detach_dev(t5);
+    			if (detaching) detach_dev(ul);
+    			destroy_each(each_blocks, detaching);
     		}
     	};
 
@@ -1341,18 +1442,69 @@ var app = (function () {
     		block,
     		id: create_catch_block.name,
     		type: "catch",
-    		source: "(61:0) {:catch error}",
+    		source: "(82:0) {:catch error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (53:0) {:then}
+    // (87:4) {#each faqitems_plone as faqitem, i}
+    function create_each_block_1(ctx) {
+    	let current;
+
+    	const faqitem = new FAQItem({
+    			props: {
+    				faqitem: /*faqitem*/ ctx[13],
+    				index: /*i*/ ctx[15],
+    				faqitems: /*faqitems*/ ctx[1]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(faqitem.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(faqitem, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const faqitem_changes = {};
+    			if (dirty & /*faqitems*/ 2) faqitem_changes.faqitems = /*faqitems*/ ctx[1];
+    			faqitem.$set(faqitem_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(faqitem.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(faqitem.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(faqitem, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(87:4) {#each faqitems_plone as faqitem, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (74:0) {:then}
     function create_then_block(ctx) {
     	let ul;
     	let current;
-    	let each_value = /*$faqitems*/ ctx[4];
+    	let each_value = /*$faqitems*/ ctx[5];
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -1372,7 +1524,7 @@ var app = (function () {
     			}
 
     			attr_dev(ul, "class", "svelte-1jhst6z");
-    			add_location(ul, file$1, 53, 2, 1156);
+    			add_location(ul, file$1, 74, 2, 2099);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -1384,8 +1536,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$faqitems, faqitems*/ 17) {
-    				each_value = /*$faqitems*/ ctx[4];
+    			if (dirty & /*$faqitems, faqitems*/ 34) {
+    				each_value = /*$faqitems*/ ctx[5];
     				let i;
 
     				for (i = 0; i < each_value.length; i += 1) {
@@ -1439,22 +1591,22 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(53:0) {:then}",
+    		source: "(74:0) {:then}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:4) {#each $faqitems as faqitem, i}
+    // (76:4) {#each $faqitems as faqitem, i}
     function create_each_block(ctx) {
     	let current;
 
     	const faqitem = new FAQItem({
     			props: {
-    				faqitem: /*faqitem*/ ctx[12],
-    				index: /*i*/ ctx[14],
-    				faqitems: /*faqitems*/ ctx[0]
+    				faqitem: /*faqitem*/ ctx[13],
+    				index: /*i*/ ctx[15],
+    				faqitems: /*faqitems*/ ctx[1]
     			},
     			$$inline: true
     		});
@@ -1469,8 +1621,8 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const faqitem_changes = {};
-    			if (dirty & /*$faqitems*/ 16) faqitem_changes.faqitem = /*faqitem*/ ctx[12];
-    			if (dirty & /*faqitems*/ 1) faqitem_changes.faqitems = /*faqitems*/ ctx[0];
+    			if (dirty & /*$faqitems*/ 32) faqitem_changes.faqitem = /*faqitem*/ ctx[13];
+    			if (dirty & /*faqitems*/ 2) faqitem_changes.faqitems = /*faqitems*/ ctx[1];
     			faqitem.$set(faqitem_changes);
     		},
     		i: function intro(local) {
@@ -1491,14 +1643,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(55:4) {#each $faqitems as faqitem, i}",
+    		source: "(76:4) {#each $faqitems as faqitem, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (51:16)    <p>...waiting</p> {:then}
+    // (72:16)    <p>...waiting</p> {:then}
     function create_pending_block(ctx) {
     	let p;
 
@@ -1506,7 +1658,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "...waiting";
-    			add_location(p, file$1, 51, 2, 1128);
+    			add_location(p, file$1, 72, 2, 2071);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1523,7 +1675,7 @@ var app = (function () {
     		block,
     		id: create_pending_block.name,
     		type: "pending",
-    		source: "(51:16)    <p>...waiting</p> {:then}",
+    		source: "(72:16)    <p>...waiting</p> {:then}",
     		ctx
     	});
 
@@ -1560,11 +1712,11 @@ var app = (function () {
     		pending: create_pending_block,
     		then: create_then_block,
     		catch: create_catch_block,
-    		error: 11,
+    		error: 12,
     		blocks: [,,,]
     	};
 
-    	handle_promise(promise_1 = /*promise*/ ctx[3], info);
+    	handle_promise(promise_1 = /*promise*/ ctx[4], info);
 
     	const block = {
     		c: function create() {
@@ -1590,22 +1742,22 @@ var app = (function () {
     			t8 = space();
     			button1 = element("button");
     			button1.textContent = "add";
-    			add_location(h2, file$1, 38, 2, 921);
-    			add_location(button0, file$1, 41, 6, 958);
-    			add_location(li, file$1, 40, 4, 947);
+    			add_location(h2, file$1, 59, 2, 1864);
+    			add_location(button0, file$1, 62, 6, 1901);
+    			add_location(li, file$1, 61, 4, 1890);
     			attr_dev(ul, "class", "svelte-1jhst6z");
-    			add_location(ul, file$1, 39, 2, 938);
+    			add_location(ul, file$1, 60, 2, 1881);
     			attr_dev(div0, "class", "debug");
-    			add_location(div0, file$1, 37, 0, 899);
+    			add_location(div0, file$1, 58, 0, 1842);
     			attr_dev(input0, "type", "text");
-    			add_location(input0, file$1, 67, 4, 1494);
-    			add_location(label0, file$1, 65, 2, 1468);
+    			add_location(input0, file$1, 97, 4, 2739);
+    			add_location(label0, file$1, 95, 2, 2713);
     			attr_dev(input1, "type", "text");
-    			add_location(input1, file$1, 71, 4, 1573);
-    			add_location(label1, file$1, 69, 2, 1549);
-    			add_location(button1, file$1, 73, 2, 1626);
+    			add_location(input1, file$1, 101, 4, 2818);
+    			add_location(label1, file$1, 99, 2, 2794);
+    			add_location(button1, file$1, 103, 2, 2871);
     			attr_dev(div1, "class", "createFAQItem svelte-1jhst6z");
-    			add_location(div1, file$1, 64, 0, 1438);
+    			add_location(div1, file$1, 94, 0, 2683);
     		},
     		l: function claim(nodes) {
     			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1626,38 +1778,38 @@ var app = (function () {
     			append_dev(div1, label0);
     			append_dev(label0, t5);
     			append_dev(label0, input0);
-    			set_input_value(input0, /*question*/ ctx[1]);
+    			set_input_value(input0, /*question*/ ctx[2]);
     			append_dev(div1, t6);
     			append_dev(div1, label1);
     			append_dev(label1, t7);
     			append_dev(label1, input1);
-    			set_input_value(input1, /*answer*/ ctx[2]);
+    			set_input_value(input1, /*answer*/ ctx[3]);
     			append_dev(div1, t8);
     			append_dev(div1, button1);
     			current = true;
 
     			dispose = [
-    				listen_dev(button0, "click", /*click_handler*/ ctx[8], false, false, false),
-    				listen_dev(input0, "input", /*input0_input_handler*/ ctx[9]),
-    				listen_dev(input1, "input", /*input1_input_handler*/ ctx[10]),
-    				listen_dev(button1, "click", /*createFAQItem*/ ctx[5], false, false, false)
+    				listen_dev(button0, "click", /*click_handler*/ ctx[9], false, false, false),
+    				listen_dev(input0, "input", /*input0_input_handler*/ ctx[10]),
+    				listen_dev(input1, "input", /*input1_input_handler*/ ctx[11]),
+    				listen_dev(button1, "click", /*createFAQItem*/ ctx[7], false, false, false)
     			];
     		},
     		p: function update(new_ctx, [dirty]) {
     			ctx = new_ctx;
     			info.ctx = ctx;
 
-    			if (dirty & /*promise*/ 8 && promise_1 !== (promise_1 = /*promise*/ ctx[3]) && handle_promise(promise_1, info)) ; else {
+    			if (dirty & /*promise*/ 16 && promise_1 !== (promise_1 = /*promise*/ ctx[4]) && handle_promise(promise_1, info)) ; else {
     				const child_ctx = ctx.slice();
     				info.block.p(child_ctx, dirty);
     			}
 
-    			if (dirty & /*question*/ 2 && input0.value !== /*question*/ ctx[1]) {
-    				set_input_value(input0, /*question*/ ctx[1]);
+    			if (dirty & /*question*/ 4 && input0.value !== /*question*/ ctx[2]) {
+    				set_input_value(input0, /*question*/ ctx[2]);
     			}
 
-    			if (dirty & /*answer*/ 4 && input1.value !== /*answer*/ ctx[2]) {
-    				set_input_value(input1, /*answer*/ ctx[2]);
+    			if (dirty & /*answer*/ 8 && input1.value !== /*answer*/ ctx[3]) {
+    				set_input_value(input1, /*answer*/ ctx[3]);
     			}
     		},
     		i: function intro(local) {
@@ -1699,7 +1851,7 @@ var app = (function () {
     function instance$1($$self, $$props, $$invalidate) {
     	let $faqitems,
     		$$unsubscribe_faqitems = noop,
-    		$$subscribe_faqitems = () => ($$unsubscribe_faqitems(), $$unsubscribe_faqitems = subscribe(faqitems, $$value => $$invalidate(4, $faqitems = $$value)), faqitems);
+    		$$subscribe_faqitems = () => ($$unsubscribe_faqitems(), $$unsubscribe_faqitems = subscribe(faqitems, $$value => $$invalidate(5, $faqitems = $$value)), faqitems);
 
     	$$self.$$.on_destroy.push(() => $$unsubscribe_faqitems());
     	let { apiURL = undefined } = $$props;
@@ -1709,12 +1861,33 @@ var app = (function () {
     	let question = "";
     	let answer = "";
 
+    	const faqitems_plone = [
+    		{
+    			question: "What does the Plone Foundation do?",
+    			answer: `The mission of the Plone Foundation is to protect and promote Plone.
+              The Foundation provides marketing assistance, awareness, and
+              evangelism assistance to the Plone community. The Foundation also
+              assists with development funding and coordination of funding for
+              large feature implementations. In this way, our role is similar to
+              the role of the Apache Software Foundation and its relationship with
+              the Apache Project.`
+    		},
+    		{
+    			question: "Who can join the Plone Foundation?",
+    			answer: `Everyone contributing to Plone Software, Plone documentation, organizing events or doing something good for PF.`
+    		},
+    		{
+    			question: "When is the next conference?",
+    			answer: `November in Belgium`
+    		}
+    	];
+
     	function createFAQItem(event) {
     		// reactivity! updating the store cause the view to update with the new FAQItem
     		faqitems.create({ question, answer });
 
-    		$$invalidate(1, question = "");
-    		$$invalidate(2, answer = "");
+    		$$invalidate(2, question = "");
+    		$$invalidate(3, answer = "");
     	}
 
     	let promise = getFAQItems();
@@ -1724,7 +1897,7 @@ var app = (function () {
     		const data = await response.json();
 
     		// creating store
-    		$$subscribe_faqitems($$invalidate(0, faqitems = await createFAQItems(data)));
+    		$$subscribe_faqitems($$invalidate(1, faqitems = await createFAQItems(data)));
 
     		if (response.ok) {
     			return faqitems;
@@ -1736,7 +1909,7 @@ var app = (function () {
     	
 
     	onMount(() => {
-    		$$invalidate(3, promise = getFAQItems());
+    		$$invalidate(4, promise = getFAQItems());
     	});
 
     	const writable_props = ["apiURL"];
@@ -1752,16 +1925,16 @@ var app = (function () {
 
     	function input0_input_handler() {
     		question = this.value;
-    		$$invalidate(1, question);
+    		$$invalidate(2, question);
     	}
 
     	function input1_input_handler() {
     		answer = this.value;
-    		$$invalidate(2, answer);
+    		$$invalidate(3, answer);
     	}
 
     	$$self.$set = $$props => {
-    		if ("apiURL" in $$props) $$invalidate(6, apiURL = $$props.apiURL);
+    		if ("apiURL" in $$props) $$invalidate(0, apiURL = $$props.apiURL);
     	};
 
     	$$self.$capture_state = () => {
@@ -1776,22 +1949,23 @@ var app = (function () {
     	};
 
     	$$self.$inject_state = $$props => {
-    		if ("apiURL" in $$props) $$invalidate(6, apiURL = $$props.apiURL);
-    		if ("faqitems" in $$props) $$subscribe_faqitems($$invalidate(0, faqitems = $$props.faqitems));
-    		if ("question" in $$props) $$invalidate(1, question = $$props.question);
-    		if ("answer" in $$props) $$invalidate(2, answer = $$props.answer);
-    		if ("promise" in $$props) $$invalidate(3, promise = $$props.promise);
+    		if ("apiURL" in $$props) $$invalidate(0, apiURL = $$props.apiURL);
+    		if ("faqitems" in $$props) $$subscribe_faqitems($$invalidate(1, faqitems = $$props.faqitems));
+    		if ("question" in $$props) $$invalidate(2, question = $$props.question);
+    		if ("answer" in $$props) $$invalidate(3, answer = $$props.answer);
+    		if ("promise" in $$props) $$invalidate(4, promise = $$props.promise);
     		if ("$faqitems" in $$props) faqitems.set($faqitems = $$props.$faqitems);
     	};
 
     	return [
+    		apiURL,
     		faqitems,
     		question,
     		answer,
     		promise,
     		$faqitems,
+    		faqitems_plone,
     		createFAQItem,
-    		apiURL,
     		getFAQItems,
     		click_handler,
     		input0_input_handler,
@@ -1802,7 +1976,7 @@ var app = (function () {
     class FAQ extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { apiURL: 6 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { apiURL: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,

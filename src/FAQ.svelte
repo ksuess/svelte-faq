@@ -9,6 +9,27 @@
   let question = '';
   let answer = '';
 
+  const faqitems_plone = [
+      {
+          question: 'What does the Plone Foundation do?',
+          answer: `The mission of the Plone Foundation is to protect and promote Plone.
+              The Foundation provides marketing assistance, awareness, and
+              evangelism assistance to the Plone community. The Foundation also
+              assists with development funding and coordination of funding for
+              large feature implementations. In this way, our role is similar to
+              the role of the Apache Software Foundation and its relationship with
+              the Apache Project.`
+      },
+      {
+          question: 'Who can join the Plone Foundation?',
+          answer: `Everyone contributing to Plone Software, Plone documentation, organizing events or doing something good for PF.`
+      },
+      {
+          question: 'When is the next conference?',
+          answer: `November in Belgium`
+      }
+  ]
+
   function createFAQItem(event) {
     // reactivity! updating the store cause the view to update with the new FAQItem
     faqitems.create({question: question, answer: answer});
@@ -59,7 +80,16 @@
     {/each}
   </ul>
 {:catch error}
-  <p style="color: red">{error.message}</p>
+  <p style="color: red">{error.message} url: {apiURL}</p>
+
+  <h3>Default Content on network error:</h3>
+  <ul style="color: orange">
+    {#each faqitems_plone as faqitem, i} <!-- $faqitems: value (list of FAQ items) stored in store faqitems -->
+      <FAQItem faqitem={faqitem}
+        index={i}
+        faqitems={faqitems}/>
+    {/each}
+  </ul>
 {/await}
 
 <div class="createFAQItem">
