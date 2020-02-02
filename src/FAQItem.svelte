@@ -58,7 +58,7 @@
   {#if !editmode}
     <h2 on:click={toggleAnswer}>{faqitem.question}</h2>
     <!-- conditional CSS class -->
-    <h3 class:hidden={!answervisible}>hope we can help with following answer. Mail us, we like to improve the help section. (TOTAKE: <i>conditional class</i>)</h3>
+    <!-- <h3 class:hidden={!answervisible}>hope we can help with following answer. Mail us, we like to improve the help section. (TOTAKE: <i>conditional class</i>)</h3> -->
     {#if answervisible}
       <p transition:slide|local="{{duration:1000}}">
         {faqitem.answer}
