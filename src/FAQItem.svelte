@@ -27,10 +27,29 @@
   function deleteFAQItem(event) {
     faqitems.delete(index);
   }
+
+  // use:action directive example
+  function foo(node, editmode) {
+    // the node has been mounted in the DOM
+
+    return {
+      update(editmode) {
+        // the value of `editmode` prop has changed
+        console.log(`do something on update (of editmode) of faqitem ${faqitem.question}`);
+      },
+
+      destroy() {
+        // the node has been removed from the DOM
+        // FAQItem is unmounted. So no more access to faqitem prop!
+        // Unfortunatly this does not return undefined but prop of another FAQItem instance.
+        console.log(node, `faqitem ${faqitem.question} has been removed.`);
+      }
+    };
+  }
 </script>
 
 
-<li>
+<li use:foo={editmode}>
   <div class="control">
     <button class="destructive"
       on:click={deleteFAQItem}>delete</button>
