@@ -3,7 +3,7 @@
 
   export let name;
 
-  let url1 = 'http://localhost:3002/';
+  let url1 = 'https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems.json';
   let url2 = url1;
 </script>
 
