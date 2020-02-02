@@ -32,7 +32,7 @@
   main {
     /* text-align: center; */
     padding: 1em;
-    max-width: 240px;
+    max-width: 1000px;
     margin: 0 auto;
   }
 
@@ -43,9 +43,9 @@
     font-weight: 100;
   }
 
-  @media (min-width: 640px) {
+  /* @media (min-width: 640px) {
     main {
       max-width: none;
     }
-  }
+  } */
 </style>

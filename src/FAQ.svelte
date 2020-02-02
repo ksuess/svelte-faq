@@ -2,6 +2,7 @@
   import {onMount} from 'svelte';
   import {createFAQItems} from './stores.js'
   import FAQItem from './FAQItem.svelte'
+  import { text_area_resize } from './autoresize_textarea.js'
 
   export let apiURL = undefined;
   let faqitems = undefined; // store: variable, not const, because we create / initialize it onMount
@@ -95,11 +96,11 @@
 <div class="createFAQItem">
   <label>
     Question:
-    <input type="text" bind:value={question}>
+    <input type="text" bind:value={question}/>
   </label>
   <label>
     Answer:
-    <input type="text" bind:value={answer}>
+    <textarea bind:value={answer} use:text_area_resize/>
   </label>
   <button on:click={createFAQItem}>add</button>
 </div>

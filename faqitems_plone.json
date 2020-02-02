@@ -1,0 +1,18 @@
+[
+  {
+    "question": "What does the Plone Foundation do?",
+    "answer": "The mission of the Plone Foundation is to protect and promote Plone.   The Foundation provides marketing assistance, awareness, and evangelism assistance to the Plone community. The Foundation also assists with development funding and coordination of funding for large feature implementations. In this way, our role is similar to the role of the Apache Software Foundation and its relationship with the Apache Project.""
+  },
+  {
+    "question": "Why does Plone need a Foundation?",
+    "answer": "Plone has reached critical mass, with enterprise..."
+  },
+  {
+    "question": "How to apply for Plone Foundation?",
+    "answer": "Fill out the form on plone.org and describe your merits. Welcome!"
+  },
+  {
+    "question": "When is the next conference?",
+    "answer": "Next one is in November in Belgium."
+  }
+]

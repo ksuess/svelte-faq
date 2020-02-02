@@ -38,6 +38,13 @@ input, button, select, textarea {
 	border: 1px solid #ccc;
 	border-radius: 2px;
 }
+textarea {
+  width: 100%;
+}
+input {
+    width: 25em; 
+    max-width: 100%;
+}
 
 input:disabled {
 	color: #ccc;
