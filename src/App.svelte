@@ -1,7 +1,7 @@
 <script>
   import FAQ from "./FAQ.svelte"
 
-  export let name;
+  // export let name;
 
   let url1 = 'https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems_garten.json';
   let url2 = 'https://raw.githubusercontent.com/ksuess/svelte-faq/master/faqitems_plone.json';
