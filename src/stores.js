@@ -18,7 +18,7 @@ export function createFAQItems(items) {
         delete: index => update(items => {
             // console.log(`FAQItem with ${index} deleted`);
             // console.log("Items before deleting action", items);
-            items.splice(index, 1);
+            items.splice(index, 1); // löscht ab index genau 1 Element
             return items
         }),
         reset: () => set(items)
